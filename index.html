@@ -8,9 +8,11 @@
 
 
 <body>
-<!--   load paused gif
+<!--   still need:
+        10 static gifs
+        load paused gif
         unpause gif
-        redraw buttons when adding a new one
+        display ratings
 
   -->
 
@@ -30,7 +32,7 @@
       event.preventDefault();      
       // alert($(this).attr("new-animal-button"));
       var name = $("#new-animal-button").val().trim();
-      alert("you typed " + name);
+      //alert("you typed " + name); - testing purposes
       buttonArray.push(name);
       // redraw buttons
       drawButtons();
@@ -38,7 +40,7 @@
 
 
     });//closing on "click"
-//drawButtons($(this));
+
 drawButtons();
 
 function drawButtons(){  
@@ -55,23 +57,37 @@ function drawButtons(){
           //alert("This animal is " + $(this).attr("giphy-to-search"));
           var animalName = $(this).attr("giphy-to-search");
           //var animalName = object.attr("giphy-to-search");
-          var queryURL = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" + animalName;
-            console.log(queryURL);
+          //var queryURL = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" + animalName;
+          //var xhr = $.get("http://api.giphy.com/v1/gifs/search?q=ryan+gosling&api_key=YOUR_API_KEY&limit=5");
+          var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + animalName + "&api_key=dc6zaTOxFJmzC&limit=10";
+          console.log(queryURL);
         // Perfoming an AJAX GET request to our queryURL
-        $.ajax({
-          url: queryURL,
-          method: "GET"
-            }).done(function(response) {
-              // Saving the image_original_url property
-              var imageUrl = response.data.image_original_url;
-              // Creating and storing an image tag
-              var animalImage = $("<img>");
-              // Setting the animalImage src attribute to imageUrl
-              animalImage.attr("src", imageUrl);
-              animalImage.attr("alt", animalName + " image");
-              // Prepending the animalImage to the images div
-              $("#images").prepend(animalImage);
-            }); // .done function
+                $.ajax({
+                  url: queryURL,
+                  method: "GET"
+                    }).done(function(response) {
+                      console.log(response);
+                      // Saving the image_original_url property
+                      //var imageUrl = response.data.image_original_url;
+                      //console.log(imageUrl);
+                      //var imageUrl = response + ".data." + i + ".images.original.url";
+                        for(var j=0; j<10; j++){
+                          var imageUrl = response.data[j].images.original.url;
+                          var imageRating = response.data[j].rating;
+                          console.log("image " + j + " is " + imageUrl);              
+                          console.log("rating is " + imageRating);              
+                          // Creating and storing an image tag
+                          var animalImage = $("<img>");
+                          // Setting the animalImage src attribute to imageUrl
+                          animalImage.attr("src", imageUrl);
+                          animalImage.attr("alt", animalName + " image");
+                          //animalImage.text("<p>" + imageRating + "<p>")
+                          // Prepending the animalImage to the images div
+                          $("#images").prepend(animalImage);
+                          $("#images").prepend("<p> Rating is: " + imageRating + "<p>");
+                        } // for j loop, gets 10 images
+                    }); // whole ajax function
+
         }); // .on "click" closing tag      
   } // for loop closer
 } // function drawButtons()
